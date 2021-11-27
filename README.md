@@ -1,6 +1,6 @@
 # Shader Autograder
 
-This autograder is designed for [graphics101-raytracing](http://github.com/yig/graphics101-pipeline).
+This autograder is designed for [graphics101-pipeline](http://github.com/yig/graphics101-pipeline).
 Download this repository and run it via:
 
     python3 autograde.py path/to/build/pipeline path/to/examples
