@@ -3,12 +3,22 @@
 This autograder is designed for [graphics101-pipeline](http://github.com/yig/graphics101-pipeline).
 Download this repository and run it via:
 
-    python3 autograde.py path/to/build/pipeline path/to/examples
+    python3 autograde.py --all path/to/build/pipeline path/to/examples
 
 If you download `graphics101-pipeline-autograder` and place it
 next to `graphics101-pipeline` in the filesystem, then the command would be:
 
-    python3 autograde.py ../graphics101-pipeline/build/pipeline ../graphics101-pipeline/examples
+    python3 autograde.py --all ../graphics101-pipeline/build/pipeline ../graphics101-pipeline/examples
+
+Instead of `--all`, you can also specify one or more of:
+
+```
+--all-but-normalmap  Whether to execute all tests except tangent-space normal mapping.
+--phong              Whether to execute phong tests.
+--cel                Whether to execute cel tests.
+--matcap             Whether to execute matcap tests.
+--normalmap          Whether to execute tangent-space normal mapping tests.
+```
 
 The numbers in the score column measure the average absolute difference in pixel values between the ground truth and the tested executable magnified by 10.
 (Because of aliasing artifacts near the boundaries of shapes, the difference actually uses the minimum to a pixel or its 8 neighbors.)
