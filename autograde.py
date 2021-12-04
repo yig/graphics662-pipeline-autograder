@@ -109,9 +109,9 @@ if __name__ == '__main__':
     ## We must pass the output directory as a parameter,
     ## since it is derived from the current time and that may be different in
     ## other instantiations.
-    with multiprocessing.Pool() as pool: list(pool.starmap( run_one, ( (args.executable,test,OUTPUT_DIR) for test in all_tests ), 1 ))
+    # with multiprocessing.Pool() as pool: list(pool.starmap( run_one, ( (args.executable,test,OUTPUT_DIR) for test in all_tests ), 1 ))
     ## Run all tests serially:
-    # for test in all_tests: run_one( args.executable, test, OUTPUT_DIR )
+    for test in all_tests: run_one( args.executable, test, OUTPUT_DIR )
     
     ## Organize them into categories
     from collections import OrderedDict
