@@ -57,10 +57,10 @@ if __name__ == '__main__':
     parser.add_argument( 'examples', help = 'The path to the examples directory containing the JSON files.' )
     
     parser.add_argument( '--all', action = 'store_true', help = 'Whether to execute all tests.' )
-    parser.add_argument( '--all-but-normalmap', action = 'store_true', help = 'Whether to execute all tests except tangent-space normal mapping.' )
+    parser.add_argument( '--all-but-sampling', action = 'store_true', help = 'Whether to execute all tests except PBR with sampling.' )
     
-    parser.add_argument( '--phong', action = 'store_true', help = 'Whether to execute phong tests.' )
-    parser.add_argument( '--cel', action = 'store_true', help = 'Whether to execute cel tests.' )
+    parser.add_argument( '--pbr-direct', action = 'store_true', help = 'Whether to execute PBR tests (no sampling).' )
+    parser.add_argument( '--pbr-sampling', action = 'store_true', help = 'Whether to execute PBR tests (with environment map sampling).' )
     parser.add_argument( '--matcap', action = 'store_true', help = 'Whether to execute matcap tests.' )
     parser.add_argument( '--normalmap', action = 'store_true', help = 'Whether to execute tangent-space normal mapping tests.' )
     
@@ -68,33 +68,34 @@ if __name__ == '__main__':
     
     ## Collect all tests
     all_tests = []
-    if args.all or args.all_but_normalmap or args.phong:
+    if args.all or args.all_but_sampling or (args.pbr_direct and not args.normalmap):
         all_tests.extend([
-        "phong_bunny.json",
-        "phong_bunny-reflective.json",
-        "phong_bunny-refractive.json",
-        "phong_sphere.json"
+        "pbr_boombox-nonormals-direct.json",
+        "pbr_bunny.json",
+        "pbr_cube2.json",
+        "pbr_earth.json",
+        "pbr_robot.json",
+        "pbr_sphere-dielectric-direct-lights.json",
+        "pbr_sphere-dielectric-direct.json",
+        "pbr_sphere-metal-direct.json"
         ])
-    if args.all or args.all_but_normalmap or args.cel:
+    if args.all or args.all_but_sampling or (args.pbr_direct and args.normalmap):
         all_tests.extend([
-        "cel_bunny.json",
-        "cel_sphere.json"
+        "pbr_boombox-normals-direct.json",
         ])
-    if args.all or args.all_but_normalmap or args.matcap:
+    if args.all or args.all_but_sampling or (args.pbr_sampling and args.normalmap):
+        all_tests.extend([
+        "pbr_boombox-normals-sampled.json"
+        ])
+    if args.all or args.all_but_sampling or (args.pbr_sampling and not args.normalmap):
+        all_tests.extend([
+        "pbr_boombox-nonormals-sampled.json"
+        ])
+    if args.all or args.all_but_sampling or args.matcap:
         all_tests.extend([
         "matcap_bunny.json",
         "matcap_head.json",
-        "matcap_hercules.json",
-        "matcap_lemon.json",
         "matcap_sphere.json"
-        ])
-    if args.all or args.normalmap:
-        all_tests.extend([
-        "normalmap_cube.json",
-        "normalmap_head.json",
-        "normalmap_lemon.json",
-        "normalmap_hercules_bronze.json",
-        "normalmap_hercules_marble.json"
         ])
     all_tests = [ Path(args.examples) / jsonname for jsonname in all_tests ]
     
