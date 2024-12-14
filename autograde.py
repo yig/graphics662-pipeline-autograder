@@ -51,10 +51,13 @@ def jsonpath2outputpath( jsonpath, output_dir ): return output_dir / ( jsonpath.
 if __name__ == '__main__':
     
     import argparse
+    def path_exists( path ):
+        if not Path(path).exists(): raise argparse.ArgumentTypeError(f"Path does not exist: {path}")
+        return path
     parser = argparse.ArgumentParser( description = 'Grade Shaders.' )
     # parser.add_argument( 'command', choices = ['grade', 'truth'], help = 'The command to run.' )
-    parser.add_argument( 'executable', help = 'The path to the pipeline executable.' )
-    parser.add_argument( 'examples', help = 'The path to the examples directory containing the JSON files.' )
+    parser.add_argument( 'executable', type=path_exists, help = 'The path to the pipeline executable.' )
+    parser.add_argument( 'examples', type=path_exists, help = 'The path to the examples directory containing the JSON files.' )
     
     parser.add_argument( '--all', action = 'store_true', help = 'Whether to execute all tests.' )
     parser.add_argument( '--all-but-sampling', action = 'store_true', help = 'Whether to execute all tests except PBR with sampling.' )
@@ -66,37 +69,34 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
+    examples = [
+        ( "pbr_boombox-nonormals-direct.json", ( "pbr", "direct" ) ),
+        ( "pbr_bunny.json", ( "pbr", "direct" ) ),
+        ( "pbr_cube2.json", ( "pbr", "direct", "normals" ) ),
+        ( "pbr_earth.json", ( "pbr", "direct" ) ),
+        ( "pbr_robot.json", ( "pbr", "direct", "normals" ) ),
+        ( "pbr_sphere-dielectric-direct-lights.json", ( "pbr", "direct" ) ),
+        ( "pbr_sphere-dielectric-direct.json", ( "pbr", "direct" ) ),
+        ( "pbr_sphere-metal-direct.json", ( "pbr", "direct" ) ),
+        ( "pbr_boombox-normals-direct.json", ( "pbr", "direct", "normals" ) ),
+        ( "pbr_boombox-normals-sampled.json", ( "pbr", "sampled", "normals" ) ),
+        ( "pbr_boombox-nonormals-sampled.json", ( "pbr", "sampled" ) ),
+        ( "matcap_bunny.json", ( "matcap" ) ),
+        ( "matcap_head.json", ( "matcap" ) ),
+        ( "matcap_sphere.json", ( "matcap" ) )
+    ]
+    
     ## Collect all tests
-    all_tests = []
-    if args.all or args.all_but_sampling or (args.pbr_direct and not args.normalmap):
-        all_tests.extend([
-        "pbr_boombox-nonormals-direct.json",
-        "pbr_bunny.json",
-        "pbr_cube2.json",
-        "pbr_earth.json",
-        "pbr_robot.json",
-        "pbr_sphere-dielectric-direct-lights.json",
-        "pbr_sphere-dielectric-direct.json",
-        "pbr_sphere-metal-direct.json"
-        ])
-    if args.all or args.all_but_sampling or (args.pbr_direct and args.normalmap):
-        all_tests.extend([
-        "pbr_boombox-normals-direct.json",
-        ])
-    if args.all or args.all_but_sampling or (args.pbr_sampling and args.normalmap):
-        all_tests.extend([
-        "pbr_boombox-normals-sampled.json"
-        ])
-    if args.all or args.all_but_sampling or (args.pbr_sampling and not args.normalmap):
-        all_tests.extend([
-        "pbr_boombox-nonormals-sampled.json"
-        ])
-    if args.all or args.all_but_sampling or args.matcap:
-        all_tests.extend([
-        "matcap_bunny.json",
-        "matcap_head.json",
-        "matcap_sphere.json"
-        ])
+    all_tests = [
+        example for example, attribs in examples
+        if
+            args.all
+            or (args.all_but_sampling and not "sampling" in attribs)
+            or (args.pbr_sampling and "sampled" in attribs)
+            or (args.pbr_direct and "direct" in attribs)
+            or (args.normalmap and "normals" in attribs)
+            or (args.matcap and "matcap" in attribs)
+    ]
     all_tests = [ Path(args.examples) / jsonname for jsonname in all_tests ]
     
     ## Create the output directory
