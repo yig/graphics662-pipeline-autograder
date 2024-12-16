@@ -67,6 +67,8 @@ if __name__ == '__main__':
     parser.add_argument( '--matcap', action = 'store_true', help = 'Whether to execute matcap tests.' )
     parser.add_argument( '--normalmap', action = 'store_true', help = 'Whether to execute tangent-space normal mapping tests.' )
     
+    parser.add_argument( '--filter', help = 'Filter tests with a substring that must be present in the test name. Must be used with an inclusion flag.' )
+    
     args = parser.parse_args()
     
     examples = [
@@ -97,6 +99,7 @@ if __name__ == '__main__':
             or (args.normalmap and "normals" in attribs)
             or (args.matcap and "matcap" in attribs)
     ]
+    if args.filter is not None: all_tests = [ example for example in all_tests if args.filter in example ]
     all_tests = [ Path(args.examples) / jsonname for jsonname in all_tests ]
     
     ## Create the output directory
